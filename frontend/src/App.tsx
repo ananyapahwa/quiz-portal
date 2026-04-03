@@ -1,6 +1,8 @@
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import StudentDashboard from './pages/student/StudentDashboard';
 import QuizPage from './pages/student/QuizPage';
 import ResultPage from './pages/student/ResultPage';
@@ -8,7 +10,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminQuizDetail from './pages/admin/AdminQuizDetail';
 import AdminSessionReport from './pages/admin/AdminSessionReport';
 
-const ProtectedRoute = ({ children, role }: { children: JSX.Element; role?: string }) => {
+const ProtectedRoute = ({ children, role }: { children: React.ReactNode; role?: string }) => {
   const { user, loading } = useAuth();
   if (loading) return <div className="loader-wrap"><div className="spinner" /></div>;
   if (!user) return <Navigate to="/login" />;
@@ -23,6 +25,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to={user.role === 'admin' ? '/admin' : '/'} /> : <LoginPage />} />
+      <Route path="/register" element={user ? <Navigate to={user.role === 'admin' ? '/admin' : '/'} /> : <RegisterPage />} />
       <Route path="/" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
       <Route path="/quiz/:sessionId" element={<ProtectedRoute role="student"><QuizPage /></ProtectedRoute>} />
       <Route path="/result/:sessionId" element={<ProtectedRoute role="student"><ResultPage /></ProtectedRoute>} />

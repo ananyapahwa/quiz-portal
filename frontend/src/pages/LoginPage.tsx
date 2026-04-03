@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
@@ -41,6 +42,9 @@ export default function LoginPage() {
           <button className="btn btn-primary w-full" type="submit" disabled={loading} style={{ marginTop: 8 }}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+          <p style={{ textAlign: 'center', fontSize: 13, color: 'var(--text-2)', marginTop: 12 }}>
+            Don't have an account? <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600 }}>Create one</Link>
+          </p>
         </form>
       </div>
     </div>
