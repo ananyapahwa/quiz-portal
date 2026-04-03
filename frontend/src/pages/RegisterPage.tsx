@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'student' });
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ export default function RegisterPage() {
     try {
       const { data } = await axios.post('http://localhost:4000/api/auth/register', form);
       localStorage.setItem('token', data.token);
-      window.location.href = data.user.role === 'admin' ? '/admin' : '/';
+      window.location.href = '/';
     } catch (err: any) {
       setError(err.response?.data?.error || 'Registration failed');
     } finally {
@@ -42,13 +42,6 @@ export default function RegisterPage() {
           <div className="form-group">
             <label className="label">Password</label>
             <input className="input" type="password" required value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="••••••••" />
-          </div>
-          <div className="form-group">
-            <label className="label">I am a...</label>
-            <select className="input" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
-              <option value="student">Student</option>
-              <option value="admin">Administrator</option>
-            </select>
           </div>
           {error && <p className="error-msg">⚠ {error}</p>}
           <button className="btn btn-primary w-full" type="submit" disabled={loading} style={{ marginTop: 8 }}>

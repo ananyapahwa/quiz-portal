@@ -33,7 +33,9 @@ export default function AdminSessionReport() {
           <div className="page-header">
             <button style={{ background: 'none', border: 'none', color: 'var(--text-3)', cursor: 'pointer', fontSize: 13, marginBottom: 4 }} onClick={() => navigate(-1)}>← Back</button>
             <h1 className="page-title">Session Report</h1>
-            <p className="page-sub">{report.student?.name} ({report.student?.email}) — {report.quiz?.title}</p>
+            <p className="page-sub">
+              {report.student?.name} — Roll No: <span style={{ color: 'var(--primary-light)', fontWeight: 600 }}>{report.student?.rollNo}</span> ({report.student?.email}) • {report.quiz?.title}
+            </p>
           </div>
 
           <div className="stats-row" style={{ marginBottom: 28 }}>

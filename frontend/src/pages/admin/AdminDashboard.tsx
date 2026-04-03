@@ -102,14 +102,16 @@ export default function AdminDashboard() {
           {tab === 'students' && (
             <div className="table-wrap">
               <table>
-                <thead><tr><th>Name</th><th>Email</th><th>Quizzes Taken</th><th>Joined</th></tr></thead>
+                <thead><tr><th>Roll No</th><th>Name</th><th>Email</th><th>Quizzes Taken</th><th>Joined</th><th>Actions</th></tr></thead>
                 <tbody>
                   {students.map(s => (
                     <tr key={s.id}>
+                      <td style={{ fontWeight: 600, color: 'var(--primary-light)' }}>{s.rollNo || '—'}</td>
                       <td style={{ fontWeight: 600 }}>{s.name}</td>
                       <td style={{ color: 'var(--text-2)' }}>{s.email}</td>
                       <td>{s._count?.sessions || 0}</td>
                       <td>{new Date(s.createdAt).toLocaleDateString()}</td>
+                      <td><button className="btn btn-outline btn-sm" onClick={() => navigate(`/admin/student/${s.id}`)}>History</button></td>
                     </tr>
                   ))}
                 </tbody>

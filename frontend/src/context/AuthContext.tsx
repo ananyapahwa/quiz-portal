@@ -25,12 +25,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     const { data } = await axios.post(`${API}/auth/login`, { email, password });
+    if (!data.user?.role) throw new Error('Invalid user role');
     localStorage.setItem('token', data.token);
     setToken(data.token);
     setUser(data.user);
+    // Explicit hard redirect based on role to clear any residual state
+    window.location.href = data.user.role === 'admin' ? '/admin' : '/';
   };
 
-  const logout = () => { localStorage.removeItem('token'); setToken(null); setUser(null); };
+  const logout = () => { localStorage.removeItem('token'); setToken(null); setUser(null); window.location.href = '/login'; };
 
   return <AuthContext.Provider value={{ user, token, login, logout, loading }}>{children}</AuthContext.Provider>;
 };

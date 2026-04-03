@@ -3,7 +3,7 @@ import { authenticate, adminOnly } from '../middleware/auth.middleware';
 import {
   createQuiz, listQuizzes, getQuiz, updateQuiz, deleteQuiz,
   addQuestion, updateQuestion, deleteQuestion,
-  getQuizSessions, getSessionReport, getQuizResults, getAllStudents
+  getQuizSessions, getSessionReport, getQuizResults, getAllStudents, getStudentHistory
 } from '../controllers/admin.controller';
 
 const router = Router();
@@ -23,5 +23,6 @@ router.get('/quizzes/:quizId/sessions', getQuizSessions);
 router.get('/quizzes/:quizId/results', getQuizResults);
 router.get('/sessions/:sessionId/report', getSessionReport);
 router.get('/students', getAllStudents);
+router.get('/students/:id/history', getStudentHistory);
 
 export default router;

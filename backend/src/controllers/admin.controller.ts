@@ -82,7 +82,7 @@ export const getQuizSessions = async (req: any, res: Response) => {
   try {
     const sessions = await prisma.session.findMany({
       where: { quizId: String(req.params.quizId) },
-      include: { student: { select: { name: true, email: true } } },
+      include: { student: { select: { name: true, email: true, rollNo: true } } },
       orderBy: { startedAt: 'desc' },
     });
     res.json(sessions);
@@ -94,7 +94,7 @@ export const getSessionReport = async (req: any, res: Response) => {
     const session = await prisma.session.findUnique({
       where: { id: String(req.params.sessionId) },
       include: {
-        student: { select: { name: true, email: true } },
+        student: { select: { name: true, email: true, rollNo: true } },
         quiz: { select: { title: true, durationSeconds: true } },
         answers: { include: { question: true } },
         events: { orderBy: { createdAt: 'asc' } },
@@ -105,11 +105,27 @@ export const getSessionReport = async (req: any, res: Response) => {
   } catch { res.status(500).json({ error: 'Server error' }); }
 };
 
+export const getStudentHistory = async (req: any, res: Response) => {
+  try {
+    const student = await prisma.user.findUnique({
+      where: { id: String(req.params.id) },
+      include: {
+        sessions: {
+          include: { quiz: { select: { title: true } } },
+          orderBy: { startedAt: 'desc' },
+        },
+      },
+    });
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+    res.json(student);
+  } catch { res.status(500).json({ error: 'Server error' }); }
+};
+
 export const getQuizResults = async (req: any, res: Response) => {
   try {
     const sessions = await prisma.session.findMany({
       where: { quizId: String(req.params.quizId), status: { in: ['submitted', 'expired'] } },
-      include: { student: { select: { name: true, email: true } }, answers: true },
+      include: { student: { select: { name: true, email: true, rollNo: true } }, answers: true },
       orderBy: { score: 'desc' },
     });
     const quiz = await prisma.quiz.findUnique({ where: { id: String(req.params.quizId) }, include: { _count: { select: { questions: true } } } });
@@ -121,7 +137,7 @@ export const getAllStudents = async (_req: any, res: Response) => {
   try {
     const students = await prisma.user.findMany({
       where: { role: 'student' },
-      select: { id: true, name: true, email: true, createdAt: true, _count: { select: { sessions: true } } },
+      select: { id: true, name: true, email: true, rollNo: true, createdAt: true, _count: { select: { sessions: true } } },
       orderBy: { createdAt: 'desc' },
     });
     res.json(students);
