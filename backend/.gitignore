@@ -3,3 +3,12 @@ node_modules
 .env
 
 /generated/prisma
+
+# Logs and temp files
+*.log
+dist/
+prisma_status.txt
+prisma_test.js
+reset_session.js
+reset_session_pg.js
+update_admin.js

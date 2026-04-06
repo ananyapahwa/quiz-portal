@@ -23,10 +23,20 @@ export const startSession = async (req: any, res: Response) => {
 
     const existing = await prisma.session.findFirst({ where: { studentId: req.user.id, quizId, status: 'active' } });
     if (existing) {
-      const remaining = await redis.get(`session:${existing.id}:remaining`);
+      let remaining = await redis.get(`session:${existing.id}:remaining`);
+      
+      // RECOVERY: If missing from Redis, recover from DB
+      if (remaining === null) {
+        const elapsed = (Date.now() - new Date(existing.startedAt).getTime()) / 1000;
+        let timeLeft = quiz.durationSeconds - Math.floor(elapsed);
+        if (timeLeft < 0) timeLeft = 0;
+        await redis.setEx(`session:${existing.id}:remaining`, timeLeft, String(timeLeft));
+        remaining = String(timeLeft);
+      }
+
       const questions = quiz.shuffleQuestions ? shuffle(quiz.questions) : quiz.questions;
       const safeQuestions = questions.map(({ correctAnswer: _ca, ...q }) => q);
-      return res.json({ session: existing, questions: safeQuestions, remainingSeconds: remaining ? parseInt(remaining as string) : quiz.durationSeconds });
+      return res.json({ session: existing, questions: safeQuestions, remainingSeconds: parseInt(remaining as string) });
     }
 
     const session = await prisma.session.create({ data: { studentId: req.user.id, quizId, ipAddress: req.ip } });
